@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      PuSH using snrub and SockJS
+    </title>
+    <link rel="stylesheet" href="bootstrap.min.css"/>
+    <script src="http://cdn.sockjs.org/sockjs-0.2.min.js"></script>
+    <script src="jquery-1.7.1.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script type="text/javascript">
+      var sock = new SockJS('/sockjs');
+
+      sock.onmessage = function(m) {
+        var obj = JSON.parse(m.data);
+        if (obj.update) {
+          var title = document.createElement('h5');
+          title.innerText = obj.update.topic;
+          var elem = document.createElement('pre');
+          elem.innerText = obj.update.content;
+          var updates = document.getElementById('updates');
+          updates.appendChild(title);
+          updates.appendChild(elem);
+        }
+        else if (obj.subscribed) {
+          var a = $(document.createElement('div'));
+          a.addClass('alert alert-success fade in');
+          a.text("Subscribed to " + obj.subscribed);
+          a.append($("<a class=\"close\" data-dismiss=\"alert\" href=\"#\">&times;</a>"));
+          $('#messages').append(a);
+          $('#subscriptions')
+            .append($("<li></li>")
+                      .addClass("subscription").text(obj.subscribed));
+        }
+        else if (obj.error) {
+          obj = obj.error;
+          var a = $(document.createElement('div'));
+          a.addClass('alert alert-error fade in');
+          a.text("Failed to subscribe to " + obj.topic + " with reason " + obj.reason);
+          a.append($("<a class=\"close\" data-dismiss=\"alert\" href=\"#\">&times;</a>"));
+          $('#messages').append(a);
+        }
+        else {
+          console.log("Not understood");
+          console.log(obj);
+        }
+      };
+
+      function subscribe() {
+        var hub = document.getElementById('hub').value;
+        var topic = document.getElementById('topic').value;
+        var sub = {subscribe: {topic: topic, hub: hub}};
+        sock.send(JSON.stringify(sub));
+        return false;
+      }
+    </script>
+  </head>
+  <body style="padding-top: 40px;">
+
+    <div class="container">
+
+      <h1>PuSH demo using <a href="http://github.com/squaremo/snrub">snrub</a></h1>
+      <div class="row" style="padding-top: 20px;">
+        <p class="span8">
+          This demo acts as a proxy between the browser and <a
+          href="http://pubsubhubbub.appspot.com/">PuSH
+          (pubsubhubbub)</a> hubs. It accepts subscription requests
+          over a <a href="http://sockjs.org">SockJS</a> socket,
+          subscribes to the topic at the hub if necessary, and
+          forwards updates from the hub to all subscribed sockets.
+        </p>
+        <p class="span8">
+          Try, for example, the reference hub
+          <code>http://pubsubhubbub.appspot.com</code> and a feed that
+          is distributed using it, say
+          <code>http://feeds.huffingtonpost.com/huffingtonpost/LatestNews</code>.
+        </p>
+      </div>
+      <div class="row" style="padding-top: 10px">
+        <section id="messages" class="span12">
+        </section>
+        <fieldset class="form-inline span8">
+          <input id="hub" type="hub" size="255" placeholder="Hub URL"/>
+          <input id="topic" type="topic" size="255" placeholder="Topic URL"/>
+          <input class="btn-primary" type="submit" value="Subscribe" onclick="return subscribe()"/>
+        </fieldset>
+      </div>
+      <div class="row" style="padding-top: 10px;">
+        <section id="updates" class="span7">
+          <h2>Updates</h2>
+        </section>
+        <section class="span5">
+          <h2>Subscriptions</h2>
+          <ul id="subscriptions">
+          </ul>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>
