@@ -7,9 +7,14 @@ Node.JS module for subscribing to
 In a nutshell, it's proxying PuSH to the browser using
 [SockJS](http://sockjs.org/).
 
-It's designed to run on CloudFoundry. If you deploy it there you'll
-need to 1. choose your own secret; 2. change the host string. Both of
-these are at the top of `app.js`.
+It's designed to run on CloudFoundry but can in principle run
+anywhere. To run in a publicly-accessible place you'll want to set two
+environment entries. For CloudFoundry:
+
+    $ vmc env-add my-snrub-demo SECRET="totally random string"
+    $ vmc env-add my-snrub-demo HOST="http://my-snrub-demo.cloudfoundry.com"
+
+Note that the host must start with the protocol, i.e., `"http://"`.
 
 A running version of this demo is at
 http://snrub-demo.cloudfoundry.com/.

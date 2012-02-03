@@ -1,17 +1,12 @@
-var snrub = require('snrub/lib/listener'),
+var snrub = require('snrub'),
   express = require('express');
 
-var secret = "Not much of one.";
-
-var host = (process.env.VCAP_APP_PORT) ?
-  "http://snrub-demo.cloudfoundry.com" :
-  "http://localhost:8001";
+var secret = process.env.SECRET || "Not much of one.";
+var host = process.env.HOST || "http://localhost:8001";
 
 var app = express.createServer();
 
-var push = snrub.createListener(host, "/snrub",
-  snrub.cryptoPathProvider(secret),
-  snrub.cryptoTokenProvider(secret));
+var push = snrub.createSubscriber({host: host, secret: secret});
 
 app.configure(function() {
   app.use(express.logger());
