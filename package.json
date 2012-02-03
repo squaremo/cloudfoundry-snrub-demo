@@ -1,0 +1,22 @@
+{
+  "author": "Michael Bridgen <mikeb@squaremobius.net> (http://rabbit.mq/)",
+  "name": "cloudfoundry-snrub-demo",
+  "description": "Demo for snrub that can run on CloudFoundry.com",
+  "version": "0.0.0",
+  "homepage": "http://snrub-demo.cloudfoundry.com/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/squaremo/cloudfoundry-snrub-demo.git"
+  },
+  "main": "./app",
+  "engines": {
+    "node": "~0.6.4"
+  },
+  "dependencies": {
+    "snrub": "*",
+    "sockjs": ">0.2",
+    "express": "*"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {}
+}
