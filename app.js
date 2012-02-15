@@ -130,7 +130,7 @@ push.on('error', function(errorObj) {
   delete subs[topic];
 });
 
-push.on('publish', function(topic, content) {
+push.on('update', function(topic, content) {
   send_topic(topic, {update: {topic: topic, content: content}});
 });
 
